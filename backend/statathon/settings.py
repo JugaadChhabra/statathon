@@ -1,14 +1,17 @@
 from datetime import timedelta
-
 from pathlib import Path
+from dotenv import load_dotenv
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-=w0scr)u+81j!p$nm0rhwkult5qe_c5*6k^f!yk@i6si2@5w)1'
+load_dotenv(BASE_DIR / '.env') 
+
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-insecure-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True

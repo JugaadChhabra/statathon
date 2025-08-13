@@ -117,13 +117,20 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 'rest_framework.authentication.TokenAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication', #new here
-
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # new here
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle',
+    ],  
+    'DEFAULT_THROTTLE_RATES': {
+        'default': '30/minute',   
+    }
 }
+
 
 CORS_ALLOWED_ORIGINS = [
     # Your frontend domain

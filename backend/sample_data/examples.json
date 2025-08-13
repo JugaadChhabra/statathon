@@ -1,0 +1,57 @@
+[
+    {
+      "id": 1,
+      "input_text": "The new government policy on digital infrastructure aims to connect rural areas with high-speed internet by 2026. This initiative will bridge the digital divide and create opportunities for remote work and online education in underserved communities.",
+      "expected_category": "Policy Analysis",
+      "description": "Government policy text with positive implications",
+      "metadata": {
+        "domain": "public_policy",
+        "sentiment": "positive",
+        "complexity": "medium"
+      }
+    },
+    {
+      "id": 2,
+      "input_text": "Despite economic challenges, the manufacturing sector showed resilience with a 3.2% growth in Q3. However, supply chain disruptions and rising raw material costs continue to pose significant threats to sustained recovery.",
+      "expected_category": "Economic Analysis", 
+      "description": "Mixed sentiment economic report with data points",
+      "metadata": {
+        "domain": "economics",
+        "sentiment": "mixed",
+        "complexity": "high"
+      }
+    },
+    {
+      "id": 3,
+      "input_text": "Climate change impacts are becoming increasingly visible in coastal regions. Sea level rise of 2.3mm annually threatens infrastructure and requires immediate adaptation measures including flood barriers and relocation planning.",
+      "expected_category": "Environmental Impact",
+      "description": "Environmental assessment with specific metrics",
+      "metadata": {
+        "domain": "environment",
+        "sentiment": "concerning", 
+        "complexity": "high"
+      }
+    },
+    {
+      "id": 4,
+      "input_text": "The healthcare system's response to the recent outbreak demonstrated both strengths and weaknesses. While vaccination rates improved by 15%, hospital capacity remained strained with 85% occupancy rates during peak periods.",
+      "expected_category": "Healthcare Analysis",
+      "description": "Healthcare system evaluation with performance metrics",
+      "metadata": {
+        "domain": "healthcare",
+        "sentiment": "analytical",
+        "complexity": "medium"
+      }
+    },
+    {
+      "id": 5,
+      "input_text": "Urban transportation initiatives including metro expansion and electric bus adoption have reduced traffic congestion by 12%. Citizens report improved air quality and shorter commute times, though funding for Phase 2 remains uncertain.",
+      "expected_category": "Infrastructure Assessment",
+      "description": "Transportation infrastructure review with citizen feedback",
+      "metadata": {
+        "domain": "urban_planning",
+        "sentiment": "positive_with_concerns",
+        "complexity": "medium"
+      }
+    }
+  ]

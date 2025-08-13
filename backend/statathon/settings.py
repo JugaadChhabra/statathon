@@ -13,8 +13,12 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-insecure-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*']
-CORS_ORIGIN_ALLOW_ALL = True
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:3000,http://127.0.0.1:3000'
+).split(',')
 
 
 # Application definition
@@ -130,7 +134,8 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle',
     ],  
     'DEFAULT_THROTTLE_RATES': {
-        'default': '30/minute',   
+        'user': os.environ.get('DRF_RATE_USER', '30/min'),
+        'anon': os.environ.get('DRF_RATE_ANON', '10/min'),  
     }
 }
 
@@ -142,32 +147,49 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=50000000),
-    'REFRESH_TOKEN_LIFETIME': timedelta(seconds=120),
+    # Token lifetimes — keep short in production
+    'ACCESS_TOKEN_LIFETIME': timedelta(
+        minutes=int(os.environ.get('JWT_ACCESS_MIN', '5'))
+    ), 
+    'REFRESH_TOKEN_LIFETIME': timedelta(
+        days=int(os.environ.get('JWT_REFRESH_DAYS', '1'))
+    ), 
+
+    # Rotation & blacklisting
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': False,
 
+    # Crypto settings
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
+    'SIGNING_KEY': os.environ.get('DJANGO_SECRET_KEY'),  
     'VERIFYING_KEY': None,
-    'AUDIENCE': None,
-    'ISSUER': None,
 
-    'AUTH_HEADER_TYPES': ('Bearer','JWT'),
+    # Audience & Issuer checks (important for security)
+    'AUDIENCE': os.environ.get('JWT_AUDIENCE', None),  
+    'ISSUER': os.environ.get('JWT_ISSUER', None),      
+
+    # Auth header settings
+    'AUTH_HEADER_TYPES': ('Bearer', 'JWT'),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+
+    # User identification
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
-    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+    'USER_AUTHENTICATION_RULE':
+        'rest_framework_simplejwt.authentication.default_user_authentication_rule',
 
+    # Token classes
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
 
+    # Token unique ID (optional jti claim)
     'JTI_CLAIM': 'jti',
 
+    # Sliding tokens (optional, not recommended for APIs)
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(seconds=30),   #update here for acess token
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(seconds=120), # update here for refresh token
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=1),  
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(minutes=2),
 }
 
 SWAGGER_SETTINGS = {

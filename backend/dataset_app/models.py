@@ -215,31 +215,31 @@ class DatasetRelationship(models.Model):
         return f"{self.source_dataset.name} -> {self.target_dataset.name}"
 
 
-class Dataset(models.Model):
-    name = models.CharField(max_length=200)
-    file_path = models.CharField(max_length=500)
-    description = models.TextField(blank=True)
-    section = models.CharField(max_length=100, blank = True)
-    level = models.CharField(max_length=50, blank = True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now = True)
+# class Dataset(models.Model):
+#     name = models.CharField(max_length=200)
+#     file_path = models.CharField(max_length=500)
+#     description = models.TextField(blank=True)
+#     section = models.CharField(max_length=100, blank = True)
+#     level = models.CharField(max_length=50, blank = True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now = True)
 
-    columns = ArrayField(models.CharField(max_length = 200), default = list)
-    row_count = models.IntegerField(default=0)
-    file_size = models.BigIntegerField(default = 0)
+#     columns = ArrayField(models.CharField(max_length = 200), default = list)
+#     row_count = models.IntegerField(default=0)
+#     file_size = models.BigIntegerField(default = 0)
 
-    class Meta:
-        db_table = 'datasets'
-        ordering = ['level', 'name']
+    # class Meta:
+    #     db_table = 'datasets'
+    #     ordering = ['level', 'name']
 
-        def __str__(self):
-            return f"{self.loyal} - {self.name}"
+    #     def __str__(self):
+    #         return f"{self.loyal} - {self.name}"
         
 class DatasetChunk(models.Model):
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE, related_name= 'chunks')
     chunk_index = models.IntegerField()
     content = models.TextField()
-    metadata = models.JSON(default = dict)
+    metadata = models.JSONField(default=dict)
 
     keywords = ArrayField(models.CharField(max_length = 100), default = list)
 

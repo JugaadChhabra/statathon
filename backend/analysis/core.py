@@ -2,6 +2,66 @@ import re
 from typing import Dict, List, Tuple, Any
 from collections import defaultdict
 
+CATEGORY_KEYWORDS = {
+    "Policy Analysis": [
+        "policy", "government", "legislation", "regulation", "initiative", "framework", "strategy", "implementation",
+        "scheme", "guideline", "compliance", "act", "bill", "ordinance", "amendment", "authority", "committee"
+    ],
+    "Economic Analysis": [
+        "economic", "economy", "financial", "market", "growth", "revenue", "cost", "investment", "gdp", "inflation",
+        "expenditure", "budget", "subsidy", "tax", "income", "profit", "loss", "fiscal", "monetary", "trade", "export", "import"
+    ],
+    "Environmental Impact": [
+        "environment", "climate", "pollution", "sustainability", "carbon", "emission", "renewable", "conservation",
+        "biodiversity", "waste", "recycle", "ecology", "forest", "wildlife", "water", "air", "soil", "hazardous", "greenhouse"
+    ],
+    "Healthcare Analysis": [
+        "health", "healthcare", "medical", "hospital", "patient", "treatment", "vaccine", "diagnosis", "wellness",
+        "doctor", "nurse", "clinic", "disease", "infection", "medicine", "surgery", "therapy", "immunization", "epidemic", "pandemic"
+    ],
+    "Infrastructure Assessment": [
+        "infrastructure", "transportation", "construction", "road", "bridge", "utility", "network", "facility",
+        "building", "railway", "airport", "port", "pipeline", "electricity", "power", "telecom", "urban", "rural", "maintenance"
+    ],
+    "Education Analysis": [
+        "education", "school", "college", "university", "student", "teacher", "curriculum", "syllabus", "exam",
+        "literacy", "enrollment", "dropout", "scholarship", "tuition", "classroom", "institute", "degree", "qualification"
+    ],
+    "Social Welfare": [
+        "welfare", "benefit", "social", "poverty", "housing", "employment", "unemployment", "insurance", "pension",
+        "subsidy", "grant", "aid", "support", "assistance", "scheme", "program", "community", "ngo", "volunteer"
+    ],
+    "Agriculture & Rural": [
+        "agriculture", "farmer", "crop", "irrigation", "harvest", "yield", "fertilizer", "pesticide", "rural",
+        "village", "livestock", "dairy", "farming", "agrarian", "seed", "tractor", "market", "cooperative"
+    ],
+    "Technology & Innovation": [
+        "technology", "innovation", "digital", "software", "hardware", "internet", "ai", "machine learning", "data",
+        "automation", "robotics", "startup", "research", "development", "it", "cyber", "cloud", "blockchain"
+    ]
+}
+
+def get_category_keywords_weighted() -> Dict[str, Dict[str, int]]:
+    weights = {}
+    for category, keywords in CATEGORY_KEYWORDS.items():
+        weighted = {}
+        for i, kw in enumerate(keywords):
+            weighted[kw] = 3 if i < 4 else 2
+        weights[category] = weighted
+    return weights
+
+def _generate_explanation(text: str, words: List[str], category_scores: Dict[str, float], result: str) -> Dict[str, Any]:
+    sorted_categories = sorted(category_scores.items(), key=lambda x: x[1], reverse=True)
+    top_factors = [cat for cat, score in sorted_categories[:3] if score > 0]
+
+    keywords_found = [word for word in words if word in CATEGORY_KEYWORDS.get(result, [])]
+
+    return {
+        "top_factors": top_factors,
+        "keywords_found": keywords_found,
+        "category_scores": category_scores
+    }
+
 def analyze(input_text: str, options: Dict = None) -> Tuple[str, float, Dict]:
     if options is None:
         options = {}
@@ -19,29 +79,8 @@ def analyze(input_text: str, options: Dict = None) -> Tuple[str, float, Dict]:
 
     return result, confidence, explanation
 
-def _calculate_category_scores(text: str, words: List[str]) -> Dict[str, float]:
-    keywords = {
-        "Policy Analysis": {
-            "policy": 3, "government": 2, "legislation": 3, "regulation": 2,
-            "initiative": 2, "framework": 2, "strategy": 2, "implementation": 2
-        },
-        "Economic Analysis": {
-            "economic": 3, "economy": 3, "financial": 2, "market": 2, "growth": 2,
-            "revenue": 2, "cost": 2, "investment": 2, "gdp": 3, "inflation": 2
-        },
-        "Environmental Impact": {
-            "environment": 3, "climate": 3, "pollution": 2, "sustainability": 2,
-            "carbon": 2, "emission": 2, "renewable": 2, "conservation": 2
-        },
-        "Healthcare Analysis": {
-            "health": 3, "healthcare": 3, "medical": 2, "hospital": 2, "patient": 2,
-            "treatment": 2, "vaccine": 2, "diagnosis": 2, "wellness": 2
-        },
-        "Infrastructure Assessment": {
-            "infrastructure": 3, "transportation": 2, "construction": 2, "road": 2,
-            "bridge": 2, "utility": 2, "network": 2, "facility": 2
-        }
-    }
+def _calculate_category_scores(words: List[str]) -> Dict[str, float]:
+    keywords = get_category_keywords_weighted()
 
     scores = defaultdict(float)
 

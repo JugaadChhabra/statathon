@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'analysis',
     'auth_app',
+    'dataset_app',
     'rest_framework',
 ]
 
@@ -97,6 +98,9 @@ DATABASES = {
         ssl_require=True
     )
 }
+
+AUTH_USER_MODEL = "auth_app.User"
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

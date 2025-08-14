@@ -1,8 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useTheme } from './context/ThemeContext';
+import { useAuth } from './context/AuthContext';
 import { createStyles } from './utils/styles';
+import AuthModal from './auth/AuthModal';
 
 // ============================================================================
 // ADMIN DASHBOARD HEADER
@@ -56,6 +58,9 @@ const Header = () => {
               </span>
             </div>
 
+            {/* Auth Section */}
+            <AuthButton />
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -74,22 +79,67 @@ const Header = () => {
                 {isDark ? '☀️' : '🌙'}
               </span>
             </button>
-
-            {/* User Avatar */}
-            <div 
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold"
-              style={{
-                background: styles.theme.gradients.secondary,
-                color: styles.theme.textPrimary,
-                border: `2px solid ${styles.theme.cardBorder}`
-              }}
-            >
-              👤
-            </div>
           </div>
         </div>
       </div>
     </header>
+  );
+};
+
+// Auth Button Component
+const AuthButton = () => {
+  const { user, logout } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  if (user) {
+    return (
+      <div className="relative">
+        <button
+          onClick={() => setShowUserMenu(!showUserMenu)}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+            {user.first_name ? user.first_name[0].toUpperCase() : user.email[0].toUpperCase()}
+          </div>
+          <span className="text-sm font-medium">{user.first_name || user.email}</span>
+        </button>
+
+        {showUserMenu && (
+          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border py-1 z-10">
+            <div className="px-3 py-2 border-b">
+              <p className="text-sm font-medium">{user.first_name} {user.last_name}</p>
+              <p className="text-xs text-gray-500">{user.email}</p>
+              <p className="text-xs text-blue-600">{user.role}</p>
+            </div>
+            <button
+              onClick={() => {
+                logout();
+                setShowUserMenu(false);
+              }}
+              className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 text-red-600"
+            >
+              Sign Out
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <button
+        onClick={() => setShowAuthModal(true)}
+        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+      >
+        Sign In
+      </button>
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+      />
+    </>
   );
 };
 

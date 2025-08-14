@@ -4,13 +4,10 @@ from decouple import config
 from pathlib import Path
 import os
 
-<<<<<<< Updated upstream
-=======
 import dj_database_url
 from decouple import config
 from dotenv import load_dotenv
 
->>>>>>> Stashed changes
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load variables from .env
@@ -20,21 +17,15 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-insecure-key')
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-<<<<<<< Updated upstream
-=======
 # Hosts & CORS
->>>>>>> Stashed changes
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOWED_ORIGINS = os.environ.get(
     'CORS_ALLOWED_ORIGINS',
     'http://localhost:3000,http://127.0.0.1:3000'
 ).split(',')
-<<<<<<< Updated upstream
 
-=======
 CORS_ALLOW_CREDENTIALS = True
->>>>>>> Stashed changes
 
 # Application definition
 INSTALLED_APPS = [
@@ -49,15 +40,13 @@ INSTALLED_APPS = [
     'auth_app',
     'dataset_app',
     'rest_framework',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-<<<<<<< Updated upstream
     'corsheaders.middleware.CorsMiddleware',  # CORS needs to be early
-=======
     'corsheaders.middleware.CorsMiddleware',  # CORS early
->>>>>>> Stashed changes
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -86,11 +75,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'statathon.wsgi.application'
 
-<<<<<<< Updated upstream
 # Database
-=======
 # Database (reads from DATABASE_URL in .env)
->>>>>>> Stashed changes
 DATABASES = {
     'default': dj_database_url.parse(
         config('DATABASE_URL'),
@@ -112,11 +98,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-<<<<<<< Updated upstream
 TIME_ZONE = 'Asia/Kolkata'
-=======
-TIME_ZONE = 'UTC'
->>>>>>> Stashed changes
 USE_I18N = True
 USE_TZ = True
 
@@ -140,16 +122,11 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'user': os.environ.get('DRF_RATE_USER', '30/min'),
-<<<<<<< Updated upstream
-        'anon': os.environ.get('DRF_RATE_ANON', '10/min'),  
-=======
         'anon': os.environ.get('DRF_RATE_ANON', '10/min'),
->>>>>>> Stashed changes
     }
 }
 
 SIMPLE_JWT = {
-<<<<<<< Updated upstream
     # Token lifetimes — keep short in production
     'ACCESS_TOKEN_LIFETIME': timedelta(
         minutes=int(os.environ.get('JWT_ACCESS_MIN', '5'))
@@ -164,17 +141,6 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': False,
 
     # Crypto settings
-=======
-    'ACCESS_TOKEN_LIFETIME': timedelta(
-        minutes=int(os.environ.get('JWT_ACCESS_MIN', '5'))
-    ),
-    'REFRESH_TOKEN_LIFETIME': timedelta(
-        days=int(os.environ.get('JWT_REFRESH_DAYS', '1'))
-    ),
-    'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': True,
-    'UPDATE_LAST_LOGIN': False,
->>>>>>> Stashed changes
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
     'VERIFYING_KEY': None,
@@ -195,10 +161,37 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(seconds=120),
 }
 
-SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Bearer': {'type': 'apiKey', 'name': 'Authorization', 'in': 'header'}
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': os.environ.get('DRF_RATE_USER', '30/min'),
+        'anon': os.environ.get('DRF_RATE_ANON', '10/min'),
+    }
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Statathon API',
+    'DESCRIPTION': 'API for statistical analysis and data querying',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_SETTINGS': {
+        'persistAuthorization': True,
     },
-    'USE_SESSION_AUTH': False,
-    'SECURITY_REQUIREMENTS': [{'Bearer': []}],
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
 }

@@ -2,28 +2,41 @@ from datetime import timedelta
 import dj_database_url
 from decouple import config
 from pathlib import Path
-from dotenv import load_dotenv
 import os
 
+<<<<<<< Updated upstream
+=======
+import dj_database_url
+from decouple import config
+from dotenv import load_dotenv
+
+>>>>>>> Stashed changes
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(BASE_DIR / '.env') 
+# Load variables from .env
+load_dotenv(BASE_DIR / '.env')
 
+# Secret & debug
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-insecure-key')
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
+<<<<<<< Updated upstream
+=======
+# Hosts & CORS
+>>>>>>> Stashed changes
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOWED_ORIGINS = os.environ.get(
     'CORS_ALLOWED_ORIGINS',
     'http://localhost:3000,http://127.0.0.1:3000'
 ).split(',')
+<<<<<<< Updated upstream
 
+=======
+CORS_ALLOW_CREDENTIALS = True
+>>>>>>> Stashed changes
 
 # Application definition
-
 INSTALLED_APPS = [
     'corsheaders',
     'django.contrib.admin',
@@ -39,7 +52,11 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+<<<<<<< Updated upstream
     'corsheaders.middleware.CorsMiddleware',  # CORS needs to be early
+=======
+    'corsheaders.middleware.CorsMiddleware',  # CORS early
+>>>>>>> Stashed changes
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,7 +85,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'statathon.wsgi.application'
 
+<<<<<<< Updated upstream
 # Database
+=======
+# Database (reads from DATABASE_URL in .env)
+>>>>>>> Stashed changes
 DATABASES = {
     'default': dj_database_url.parse(
         config('DATABASE_URL'),
@@ -87,7 +108,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
+<<<<<<< Updated upstream
 TIME_ZONE = 'Asia/Kolkata'
+=======
+TIME_ZONE = 'UTC'
+>>>>>>> Stashed changes
 USE_I18N = True
 USE_TZ = True
 
@@ -108,21 +133,19 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.UserRateThrottle',
         'rest_framework.throttling.AnonRateThrottle',
-    ],  
+    ],
     'DEFAULT_THROTTLE_RATES': {
         'user': os.environ.get('DRF_RATE_USER', '30/min'),
+<<<<<<< Updated upstream
         'anon': os.environ.get('DRF_RATE_ANON', '10/min'),  
+=======
+        'anon': os.environ.get('DRF_RATE_ANON', '10/min'),
+>>>>>>> Stashed changes
     }
 }
 
-
-CORS_ALLOWED_ORIGINS = [
-    # Your frontend domain
-]
-
-CORS_ALLOW_CREDENTIALS = True
-
 SIMPLE_JWT = {
+<<<<<<< Updated upstream
     # Token lifetimes — keep short in production
     'ACCESS_TOKEN_LIFETIME': timedelta(
         minutes=int(os.environ.get('JWT_ACCESS_MIN', '5'))
@@ -137,28 +160,35 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': False,
 
     # Crypto settings
+=======
+    'ACCESS_TOKEN_LIFETIME': timedelta(
+        minutes=int(os.environ.get('JWT_ACCESS_MIN', '5'))
+    ),
+    'REFRESH_TOKEN_LIFETIME': timedelta(
+        days=int(os.environ.get('JWT_REFRESH_DAYS', '1'))
+    ),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': False,
+>>>>>>> Stashed changes
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
     'VERIFYING_KEY': None,
-    'AUDIENCE': None,
-    'ISSUER': None,
-
-    'AUTH_HEADER_TYPES': ('Bearer','JWT'),
+    'AUDIENCE': os.environ.get('JWT_AUDIENCE', None),
+    'ISSUER': os.environ.get('JWT_ISSUER', None),
+    'AUTH_HEADER_TYPES': ('Bearer', 'JWT'),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
 
     # User identification
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
     'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
-
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
-
     'JTI_CLAIM': 'jti',
-
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(seconds=30),   #update here for acess token
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(seconds=120), # update here for refresh token
+    'SLIDING_TOKEN_LIFETIME': timedelta(seconds=30),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(seconds=120),
 }
 
 SWAGGER_SETTINGS = {

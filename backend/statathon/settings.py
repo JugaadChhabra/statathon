@@ -40,8 +40,10 @@ INSTALLED_APPS = [
     'auth_app',
     'dataset_app',
     'rest_framework',
-    'drf_spectacular',
+    'rest_framework_simplejwt',
+    'drf_yasg',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -108,23 +110,23 @@ STATIC_URL = 'static/'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# DRF & JWT
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
     ],
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.UserRateThrottle',
-        'rest_framework.throttling.AnonRateThrottle',
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.AnonRateThrottle",
     ],
-    'DEFAULT_THROTTLE_RATES': {
-        'user': os.environ.get('DRF_RATE_USER', '30/min'),
-        'anon': os.environ.get('DRF_RATE_ANON', '10/min'),
-    }
+    "DEFAULT_THROTTLE_RATES": {
+        "user": os.environ.get("DRF_RATE_USER", "30/min"),
+        "anon": os.environ.get("DRF_RATE_ANON", "10/min"),
+    },
 }
+
 
 SIMPLE_JWT = {
     # Token lifetimes — keep short in production
@@ -161,24 +163,6 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(seconds=120),
 }
 
-REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.UserRateThrottle',
-        'rest_framework.throttling.AnonRateThrottle',
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'user': os.environ.get('DRF_RATE_USER', '30/min'),
-        'anon': os.environ.get('DRF_RATE_ANON', '10/min'),
-    }
-}
-
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Statathon API',
     'DESCRIPTION': 'API for statistical analysis and data querying',
@@ -194,4 +178,16 @@ SPECTACULAR_SETTINGS = {
             'in': 'header'
         }
     }
+}
+
+SWAGGER_SETTINGS = {
+    "USE_SESSION_AUTH": False,  # since you're using JWT
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+        }
+    },
+    "PERSIST_AUTHORIZATION": True,
 }
